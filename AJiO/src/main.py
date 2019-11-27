@@ -1,5 +1,6 @@
 import tkinter as tk
 from src.human_detection import *
+from PIL import Image, ImageTk
 
 
 #ensure_input_folder_exists_and_is_empty()
@@ -52,14 +53,22 @@ def handle_button_click():
         return
 
     for output_file in output_files:
-        # im = Image.open(os.path.join(get_input_folder_path(), output_file))
-        tk_image = tk.PhotoImage(os.path.join(get_input_folder_path(), output_file))
+        image = Image.open(os.path.join(get_output_folder_path(), output_file))
+
+        #todo move this logic before evaluation?
+        base_width = 1000
+        width_percent = (base_width / float(image.size[0]))
+        new_width = int((float(image.size[1]) * float(width_percent)))
+        resized_image = image.resize((base_width, new_width))
+
+        tk_image = ImageTk.PhotoImage(resized_image)
         tk_images.append(tk_image)
 
     main_canvas.delete("all")
 
-    img_label = tk.Label(image=tk_images[0])
-    main_canvas.create_window(0, 0, window=img_label)
+    panel = tk.Label(root, image=tk_images[0])
+    root.panel = tk_images[0]
+    main_canvas.create_window(0, 0, window=panel)
 
     button_back = tk.Button(root, text="Wstecz")
     button_exit = tk.Button(root, text="Wyjscie")

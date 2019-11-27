@@ -1,5 +1,5 @@
 import cv2
-from src.service import *
+from src.helpers import *
 from src.tf_files.label_map_util import *
 from src.tf_files.visualization_utils import *
 
