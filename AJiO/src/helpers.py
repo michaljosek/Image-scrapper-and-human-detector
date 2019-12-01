@@ -44,14 +44,28 @@ def download_images(image_urls):
         download_image(image_url)
 
 
+def get_file_name_for_image(path, content_type):
+    url_file_name = os.path.basename(path)
+    content_type = content_type.split('/')[1]
+    if '?' in url_file_name:
+        url_file_name = url_file_name.split('?')[0]
+
+    if '.' not in url_file_name:
+        url_file_name = url_file_name + '.' + content_type
+
+    return get_new_image_file_name_if_already_exists(url_file_name)
+
+
 def download_image(path):
     resource = urllib.urlopen(path)
-    url_file_name = os.path.basename(path)
-    image_file_name = get_new_image_file_name_if_already_exists(url_file_name)
+    content_type = resource.headers.get('Content-Type')
+    image_file_name = get_file_name_for_image(path, content_type)
 
-    output = open(os.path.join(get_input_folder_path(), image_file_name), "wb")
-    output.write(resource.read())
-    output.close()
+    try:
+        output = open(os.path.join(get_input_folder_path(), image_file_name), "wb")
+        output.write(resource.read())
+    finally:
+        output.close()
 
     return
 
