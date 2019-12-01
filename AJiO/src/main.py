@@ -2,8 +2,8 @@ import tkinter as tk
 from src.human_detection import *
 
 
-#ensure_input_folder_exists_and_is_empty()
-#nsure_output_folder_exists_and_is_empty()
+ensure_input_folder_exists_and_is_empty()
+ensure_output_folder_exists_and_is_empty()
 
 root = tk.Tk()
 
@@ -42,7 +42,7 @@ def handle_button_click():
 
     image_urls = get_image_urls_from_content(content, url)
     download_images(image_urls)
-    #evaluate_input_images()
+    evaluate_input_images()
     output_files = get_output_files()
 
     if len(output_files) == 0:

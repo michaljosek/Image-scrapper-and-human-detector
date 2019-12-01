@@ -72,10 +72,17 @@ def download_image(path):
 
 def ensure_folder_exists_and_is_empty(path):
     if os.path.exists(path) and os.path.isdir(path):
-        shutil.rmtree(path)
+        try:
+            shutil.rmtree(path, ignore_errors=True)
+        except:
+            print('Error while deleting directory')
 
     if not os.path.exists(path):
-        os.makedirs(path)
+        try:
+            os.makedirs(path)
+        except:
+            print('Error while making directory')
+
     return
 
 
