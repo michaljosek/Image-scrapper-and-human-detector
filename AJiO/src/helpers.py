@@ -57,9 +57,13 @@ def get_file_name_for_image(path, content_type):
 
 
 def download_image(path):
-    resource = urllib.urlopen(path)
-    content_type = resource.headers.get('Content-Type')
-    image_file_name = get_file_name_for_image(path, content_type)
+    try:
+        resource = urllib.urlopen(path)
+        content_type = resource.headers.get('Content-Type')
+        image_file_name = get_file_name_for_image(path, content_type)
+    except:
+        print('Could not fetch file: ', path)
+        return
 
     try:
         output = open(os.path.join(get_input_folder_path(), image_file_name), "wb")
@@ -110,13 +114,16 @@ def get_output_files():
     return get_files_from_folder(get_output_folder_path())
 
 
-def get_absolute_image_urls(image_urls, url):
-    parsed_uri = urlparse(url)
-    domain_url = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
-
+def get_absolute_image_urls(image_urls, path):
     for i, url in enumerate(image_urls):
-        if url.startswith('/'):
+        if url.startswith('http'):
+            continue
+        elif url.startswith('/'):
+            parsed_uri = urlparse(url)
+            domain_url = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
             image_urls[i] = domain_url + url
+        else:
+            image_urls[i] = path + url
 
     return image_urls
 
@@ -137,7 +144,7 @@ def get_image_urls_from_content(content, url):
         if img_tag_name != 'img':
             continue
 
-        while content[i] != 's' and content[i+1] != 'r' and content[i+2] != 'c':
+        while content[i:i+3] != 'src':
             i = i + 1
 
         start = i + 5
