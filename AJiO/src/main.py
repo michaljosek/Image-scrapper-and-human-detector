@@ -1,10 +1,9 @@
 import tkinter as tk
 from src.human_detection import *
-from PIL import Image, ImageTk
 
 
 #ensure_input_folder_exists_and_is_empty()
-#ensure_output_folder_exists_and_is_empty()
+#nsure_output_folder_exists_and_is_empty()
 
 root = tk.Tk()
 
@@ -41,38 +40,21 @@ def handle_button_click():
         main_canvas.create_window(250, 210, window=error_label_http_request)
         return
 
-    image_urls = get_image_urls_from_content(content)
+    image_urls = get_image_urls_from_content(content, url)
     download_images(image_urls)
     #evaluate_input_images()
     output_files = get_output_files()
 
-    tk_images = []
     if len(output_files) == 0:
         error_label_human_not_found = tk.Label(root, text='Nie znaleziono czlowieka na zdjeciu', font=('times', 10))
         main_canvas.create_window(250, 210, window=error_label_human_not_found)
         return
 
-    for output_file in output_files:
-        image = Image.open(os.path.join(get_output_folder_path(), output_file))
-
-        #todo move this logic before evaluation?
-        base_width = 1000
-        width_percent = (base_width / float(image.size[0]))
-        new_width = int((float(image.size[1]) * float(width_percent)))
-        resized_image = image.resize((base_width, new_width))
-
-        tk_image = ImageTk.PhotoImage(resized_image)
-        tk_images.append(tk_image)
-
-    main_canvas.delete("all")
-
-    panel = tk.Label(root, image=tk_images[0])
-    root.panel = tk_images[0]
-    main_canvas.create_window(0, 0, window=panel)
-
-    button_back = tk.Button(root, text="Wstecz")
-    button_exit = tk.Button(root, text="Wyjscie")
-    button_forward = tk.Button(root, text="Dalej")
+    success_label = tk.Label(root, text='Pomyslnie przetworzono zdjecia!', font=('times', 10))
+    main_canvas.create_window(250, 150, window=success_label)
+    fetch_url_button.destroy()
+    inform_label.destroy()
+    input_entry.destroy()
 
     return
 

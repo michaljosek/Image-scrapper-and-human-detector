@@ -3,6 +3,7 @@ import os
 import shutil
 import requests
 import glob
+from urllib.parse import urlparse
 
 
 def get_folder_path():
@@ -88,6 +89,43 @@ def get_output_files():
     return get_files_from_folder(get_output_folder_path())
 
 
-def get_image_urls_from_content(content):
+def get_absolute_image_urls(image_urls, url):
+    parsed_uri = urlparse(url)
+    domain_url = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
 
-    return []
+    for i, url in enumerate(image_urls):
+        if url.startswith('/'):
+            image_urls[i] = domain_url + url
+
+    return image_urls
+
+
+def get_image_urls_from_content(content, url):
+    content = content.decode('utf-8')
+    size = len(content)
+    image_urls = []
+    i = 0
+
+    while i < size:
+        if content[i] != '<':
+            i = i + 1
+            continue
+
+        i = i + 1
+        img_tag_name = content[i:i+3]
+        if img_tag_name != 'img':
+            continue
+
+        while content[i] != 's' and content[i+1] != 'r' and content[i+2] != 'c':
+            i = i + 1
+
+        start = i + 5
+        j = start
+        while content[j] != '"':
+            j = j + 1
+
+        end = j
+        image_urls.append(content[start:end])
+        i = i + end - start
+
+    return get_absolute_image_urls(image_urls, url)
