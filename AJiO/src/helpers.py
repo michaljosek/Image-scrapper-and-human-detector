@@ -61,8 +61,8 @@ def download_image(path):
         resource = urllib.urlopen(path)
         content_type = resource.headers.get('Content-Type')
         image_file_name = get_file_name_for_image(path, content_type)
-    except:
-        print('Could not fetch file: ', path)
+    except Exception as e:
+        print('Could not fetch file: ', path, ' ', str(e))
         return
 
     try:
@@ -116,10 +116,12 @@ def get_output_files():
 
 def get_absolute_image_urls(image_urls, path):
     for i, url in enumerate(image_urls):
-        if url.startswith('http'):
+        if url.count('.') > 1:
+            continue
+        elif url.startswith('http'):
             continue
         elif url.startswith('/'):
-            parsed_uri = urlparse(url)
+            parsed_uri = urlparse(path)
             domain_url = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
             image_urls[i] = domain_url + url
         else:
@@ -147,9 +149,10 @@ def get_image_urls_from_content(content, url):
         while content[i:i+3] != 'src':
             i = i + 1
 
+        quote_character = content[i+4]
         start = i + 5
         j = start
-        while content[j] != '"':
+        while content[j] != quote_character:
             j = j + 1
 
         end = j

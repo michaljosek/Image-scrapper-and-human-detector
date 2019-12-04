@@ -48,7 +48,7 @@ def evaluate_input_images():
             np.squeeze(scores),
             category_index,
             use_normalized_coordinates=True,
-            line_thickness=8,
-            min_score_thresh=0.75)
+            line_thickness=1,
+            min_score_thresh=0.80)
 
         cv2.imwrite(os.path.join(get_output_folder_path(), input_file), image)
