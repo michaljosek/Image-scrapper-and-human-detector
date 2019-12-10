@@ -42,11 +42,7 @@ def handle_button_click():
 
     image_urls = get_image_urls_from_content(content, url)
     download_images(image_urls)
-
-    try:
-        evaluate_input_images()
-    except Exception as e:
-        print('Could not evaluate img', str(e))
+    evaluate_input_images()
 
     output_files = get_output_files()
 

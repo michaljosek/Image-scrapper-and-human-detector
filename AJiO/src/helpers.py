@@ -68,6 +68,7 @@ def download_image(path):
     try:
         output = open(os.path.join(get_input_folder_path(), image_file_name), "wb")
         output.write(resource.read())
+        output.close()
     finally:
         output.close()
 
