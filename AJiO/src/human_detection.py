@@ -29,12 +29,21 @@ detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
 detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
 num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 
-input_files = get_input_files()
+
+def check_if_file_is_gif(input_file):
+    if 'gif' in input_file:
+        image = Image.open(input_file)
+        new_path = input_file + ".png"
+        image.save(new_path, 'png')
+        return new_path
+    return input_file
 
 
 def evaluate_input_images():
+    input_files = get_input_files()
     for i, input_file in enumerate(input_files):
         try:
+            input_file = check_if_file_is_gif(input_file)
             evaluate_input_image(input_file)
         except Exception as e:
             print('Could not evaluate img', str(e))
@@ -59,6 +68,6 @@ def evaluate_input_image(input_file):
         category_index,
         use_normalized_coordinates=True,
         line_thickness=1,
-        min_score_thresh=0.80)
+        min_score_thresh=0.30)
 
     cv2.imwrite(os.path.join(get_output_folder_path(), input_file), image)
