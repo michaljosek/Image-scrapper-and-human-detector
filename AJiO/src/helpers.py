@@ -117,14 +117,16 @@ def get_output_files():
 
 def get_absolute_image_urls(image_urls, path):
     for i, url in enumerate(image_urls):
-        if url.count('.') > 1:
-            continue
-        elif url.startswith('http'):
-            continue
+        if url.startswith('//'):
+            image_urls[i] = 'http://' + url[2:]
         elif url.startswith('/'):
             parsed_uri = urlparse(path)
             domain_url = '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
             image_urls[i] = domain_url + url
+        elif url.count('.') > 1 and 'http' in url:
+            continue
+        elif url.startswith('http'):
+            continue
         else:
             image_urls[i] = path + url
 
